@@ -1,0 +1,8 @@
+
+Example:
+
+jason@nical:~/svn/openkicks/trunk$ ./bin/okpopfile -h
+Usage: okpopfile RDOFILE DATAFILE FILENAME
+
+jason@nical:~/svn/openkicks/trunk$ ./bin/okpopfile online/murach/src/rdo/CUSTMAS.rdo online/murach/src/data/CUSTMAS.sln CUSTMAS
+

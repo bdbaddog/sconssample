@@ -1,0 +1,81 @@
+#!/bin/bash
+
+OKDIR=${OKDIR?"ERROR: OKDIR is not set"}
+. ${OKDIR}/src/stringent.sh || exit 1
+. ${OKDIR}/gensrc/config.sh || exit 1
+
+if [[ ! -d ${OKDIR} ]]
+then
+   traperr "OKDIR must be a directory"
+fi
+
+OKREGION=${OKREGION?"ERROR: OKREGION is not set"}
+
+UsageMsg="Usage: okcompcbl -h [-o outputfile ] application progname";
+
+HelpMsg="${UsageMsg}\n
+       where: \n
+       -h  display this help and exit\n
+       -o output target
+       example: okcompcbl murach INVMENU.cbl"
+
+LOGOPTION=""
+OkcblOption=""
+ExitStatus=0
+# CMDLNTARGET is output .so of this script. This optionally passed into okcompcbl
+# so it can be validated against the derived value.  This is done to facilitate
+# usage of this script in scons; scons requires specifiation of output file.
+CMDLNTARGET=""
+
+while getopts 'hP:l:o:' opt; do
+   case $opt in
+      h) echo "${HelpMsg}"
+         exit 0
+         ;;
+      o) CMDLNTARGET="${OPTARG}"
+         ;;
+      \?) echo "unknown option ${opt}"
+         echo "${UsageMsg}"
+         exit 1
+         ;;
+   esac
+done
+
+shift $((OPTIND-1))
+
+if (( $# != 2 ));then
+   echo "${UsageMsg}"
+   exit 1
+fi
+
+APPNAME="${1}"   # example: murach
+CMDLNSRCPATH="${2}"   # example: src/cbl/INVMENU.cbl
+
+# this is the end of command line parsing.
+
+# Derived Values:
+
+APPDIR="${OKREGION}/${APPNAME}"
+CBLFILE=${CMDLNSRCPATH##*/}
+CBLFILE=${CBLFILE%.cbl}
+CBLDIR=${CMDLNSRCPATH%/*}
+DSTLIB=${APPDIR}/lib
+DSTDBG=${APPDIR}/dbg
+TARGET=${DSTLIB}/${CBLFILE}.so
+SRCCPYPATH=${APPDIR}/src/cpy
+SRCFILE=${APPDIR}/${CBLDIR}/${CBLFILE}.cbl
+CPYPATH1=${APPDIR}/src/cpy      # application copybooks.
+CPYPATH2=${OKDIR}/cpy           # system copybooks.
+CPYPATH3=${APPDIR}/srcpp/cpy    # bms copybooks.
+
+# Make the derived folders:
+# Each of these folders should be in the .gitignore.
+
+mkdir -p ${APPDIR}/err
+mkdir -p ${DSTLIB}
+mkdir -p ${DSTDBG}
+mkdir -p ${APPDIR}/srcpp/cpy
+mkdir -p ${APPDIR}/srcpp/cbl
+
+touch ${TARGET}
+

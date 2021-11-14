@@ -1,0 +1,8 @@
+vsc2
+list()
+listpath(/home/pottmi/tmp)
+setting
+print
+copylist
+errlist(verbose)
+defaultbyte(0)

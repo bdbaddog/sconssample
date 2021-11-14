@@ -1,0 +1,7 @@
+import os
+
+env = Environment(ENV = {'OKDIR': os.environ['OKDIR'], 'OKREGION': os.environ['OKREGION'], 'PATH': os.environ['PATH']
+});
+
+SConscript('src/SConscript', exports='env')
+

@@ -1,0 +1,23 @@
+How to add db user for ok3270d?
+
+Answer:
+There is a program named "okuser" to manage db user for ok3270d.
+
+./bin/okuser -h
+Usage: okuser [OPTION]
+where:
+  -a username           specify the username to add
+  -d username           specify the username to delete
+  -L                    list all the username and uid
+  -h                    display this help nad exit
+  -l LEVEL              specify the log level
+
+1). add a user:
+    okuser -a username
+
+2). delete a user:
+    okuser -d username
+
+3). list all existing users:
+    okuser -L
+

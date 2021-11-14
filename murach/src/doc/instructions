@@ -1,0 +1,37 @@
+
+1. Start the DBMS on your DBMS server $HOST, please refer to 
+   openkicks_ins.txt (step 3) on how to install and start the DBMS.
+   Please use the following command to test if the DBMS is ready:
+      psql -h $HOST -d okdb_$USER
+   If it is not ready, please also refer to openkicks_ins.txt for details.
+   
+   Or you can test the DBMS with:
+      $OKDIR/bin/okstartdb
+   If the DBMS is not ready, okstartdb will try to start it
+
+
+2. Configure your $OKDIR/etc/DFHSIT.txt for openkicks
+   File format:
+      UserName,SystemID,Host,Region,3270 Port,Https Port,Database Vendor,Database@DatabaseHost,    Cobol Vendor,Charset, SecurityModel
+   Exmample:
+      jason,   test,    test,$REGION,3270,    8080,      postgres,        okdb_jason@192.168.0.254,test,        iso88591,ru
+
+
+3. Add database items to the "transaction" table:
+   psql -h $HOST -d okdb_$USER -f $OKREGION/murach/src/rdo/murach.sql
+
+
+4. Now you can view these items through web browser
+   $OKDIR/bin/oktcpd
+   http://192.168.0.100:$"Https Port"
+
+
+5. Start ok3270d
+   make install
+   $OKDIR/bin/ok3270d
+
+
+6. Now you can connect to ok3270d with x3270
+   x3270 -> 192.168.0.100:$"3270 Port"
+   And you can type the TransID to start the corresponding program
+
