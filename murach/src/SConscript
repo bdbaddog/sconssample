@@ -6,7 +6,8 @@ Import('env')
 
 copy_regex = r"(?i)^......\s+COPY\s+(\w+)"
 cre_copy = re.compile(copy_regex, re.M)
-copypaths = ['src/cpy', 'srcpp/cpy']
+copypaths = ['src/cpy', 'srcpp/cpy', os.environ['OKDIR'] + '/cpy' ]
+env.Append(OKCOPYPATH = copypaths)
 
 # Note: Potter suspects that the files listed in l2 list actually need
 # to have the path included but the sample code at 
