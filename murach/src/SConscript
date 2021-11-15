@@ -1,20 +1,22 @@
-
 import os
 import re
 import SCons
+from SCons.Scanner import Classic
 
-Import('env')
+Import("env")
 
 copy_regex = r"(?i)^......\s+COPY\s+(\w+)"
 cre_copy = re.compile(copy_regex, re.M)
-copypaths = ['src/cpy', 'srcpp/cpy', os.environ['OKDIR'] + '/cpy' ]
-env.Append(OKCOPYPATH = copypaths)
+copypaths = ["#/src/cpy", "#/srcpp/cpy", os.environ["OKDIR"] + "/cpy"]
+env['OKCOPYPATH']=copypaths
 
 # Note: Potter suspects that the files listed in l2 list actually need
-# to have the path included but the sample code at 
+# to have the path included but the sample code at
 # https://scons.org/doc/production/HTML/scons-user/ch20.html
 # does not show that as a sample.
 def okcbl_scan(node, env, path, arg=()):
+    # breakpoint()
+
     contents = node.get_text_contents()
     l1 = cre_copy.findall(contents)
     # this feature if python is call list comprehension
@@ -30,22 +32,43 @@ okcblbld = Builder(action=os.environ['OKDIR'] + '/bin/okcompcbl -o $TARGET murac
                    source_scanner = okcblscanner,
                    src_suffix = '.cbl')
 
-env['BUILDERS']['OkCobol'] = okcblbld
+    source_dir = node.get_dir()
 
-env.OkCobol('#/lib/INVMENU.so','#/src/cbl/INVMENU.cbl')
+    # print("Path:%s" % path)
+    # this feature if python is call list comprehension
+    l2 = [Classic.find_include(li + ".cpy", node.dir, path)[0] for li in l1]
+    print("L2:%s"%l2)
+    return l2
 
 
-env.OkCobol('#/lib/CSTMNTB.so','#/src/cbl/CSTMNTB.cbl')
-env.OkCobol('#/lib/CSTMNTP.so','#/src/cbl/CSTMNTP.cbl')
-env.OkCobol('#/lib/CUSTINQ1.so','#/src/cbl/CUSTINQ1.cbl')
-env.OkCobol('#/lib/CUSTINQ2.so','#/src/cbl/CUSTINQ2.cbl')
-env.OkCobol('#/lib/CUSTINQ3.so','#/src/cbl/CUSTINQ3.cbl')
-env.OkCobol('#/lib/CUSTMNT1.so','#/src/cbl/CUSTMNT1.cbl')
-env.OkCobol('#/lib/CUSTMNT2.so','#/src/cbl/CUSTMNT2.cbl')
-env.OkCobol('#/lib/CUSTMNT3.so','#/src/cbl/CUSTMNT3.cbl')
-env.OkCobol('#/lib/DFXXP00A.so','#/src/cbl/DFXXP00A.cbl')
-env.OkCobol('#/lib/GETINV.so','#/src/cbl/GETINV.cbl')
-env.OkCobol('#/lib/INVSUM1.so','#/src/cbl/INVSUM1.cbl')
-env.OkCobol('#/lib/ORDRENT.so','#/src/cbl/ORDRENT.cbl')
-env.OkCobol('#/lib/SYSERR.so','#/src/cbl/SYSERR.cbl')
+okcblscanner = Scanner(
+    function=okcbl_scan, skeys=[".cpy"], path_function=FindPathDirs("OKCOPYPATH")
+)
 
+# okcblscanner = Classic("Ok Scanner", ['.cbl'], "OKCOPYPATH", cre_copy)
+
+okcblbld = Builder(
+    action=os.environ["OKDIR"] + "/bin/okcompcbl -o $TARGET murach $SOURCE",
+    suffix=".so",
+    source_scanner=okcblscanner,
+    src_suffix=".cbl",
+)
+
+env["BUILDERS"]["OkCobol"] = okcblbld
+
+env.OkCobol("#/lib/INVMENU.so", "#/src/cbl/INVMENU.cbl")
+
+
+env.OkCobol("#/lib/CSTMNTB.so", "#/src/cbl/CSTMNTB.cbl")
+env.OkCobol("#/lib/CSTMNTP.so", "#/src/cbl/CSTMNTP.cbl")
+env.OkCobol("#/lib/CUSTINQ1.so", "#/src/cbl/CUSTINQ1.cbl")
+env.OkCobol("#/lib/CUSTINQ2.so", "#/src/cbl/CUSTINQ2.cbl")
+env.OkCobol("#/lib/CUSTINQ3.so", "#/src/cbl/CUSTINQ3.cbl")
+env.OkCobol("#/lib/CUSTMNT1.so", "#/src/cbl/CUSTMNT1.cbl")
+env.OkCobol("#/lib/CUSTMNT2.so", "#/src/cbl/CUSTMNT2.cbl")
+env.OkCobol("#/lib/CUSTMNT3.so", "#/src/cbl/CUSTMNT3.cbl")
+env.OkCobol("#/lib/DFXXP00A.so", "#/src/cbl/DFXXP00A.cbl")
+env.OkCobol("#/lib/GETINV.so", "#/src/cbl/GETINV.cbl")
+env.OkCobol("#/lib/INVSUM1.so", "#/src/cbl/INVSUM1.cbl")
+env.OkCobol("#/lib/ORDRENT.so", "#/src/cbl/ORDRENT.cbl")
+env.OkCobol("#/lib/SYSERR.so", "#/src/cbl/SYSERR.cbl")
