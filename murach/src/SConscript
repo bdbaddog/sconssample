@@ -10,6 +10,10 @@ cre_copy = re.compile(copy_regex, re.M)
 copypaths = ["#/src/cpy", "#/srcpp/cpy", os.environ["OKDIR"] + "/cpy"]
 env['OKCOPYPATH']=copypaths
 
+
+# TODO: remove when post 4.2.0 is available
+classic = Classic('cobol',('.cbl',),'OKCOPYPATH', copy_regex)
+
 # Note: Potter suspects that the files listed in l2 list actually need
 # to have the path included but the sample code at
 # https://scons.org/doc/production/HTML/scons-user/ch20.html
@@ -24,7 +28,7 @@ def okcbl_scan(node, env, path, arg=()):
 
     # print("Path:%s" % path)
     # this feature if python is call list comprehension
-    l2 = [Classic.find_include(env, li + ".cpy", source_dir, path=path)[0] for li in l1]
+    l2 = [classic.find_include(li + ".cpy", source_dir, path=path)[0] for li in l1]
     # print("L2:%s"%[str(s) for s in l2])
     return l2
 
