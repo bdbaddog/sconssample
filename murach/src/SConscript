@@ -24,7 +24,7 @@ def okcbl_scan(node, env, path, arg=()):
 
     # print("Path:%s" % path)
     # this feature if python is call list comprehension
-    l2 = [Classic.find_include(li + ".cpy", source_dir, path)[0] for li in l1]
+    l2 = [Classic.find_include(env, li + ".cpy", source_dir, path=path)[0] for li in l1]
     # print("L2:%s"%[str(s) for s in l2])
     return l2
 
