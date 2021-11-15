@@ -1,8 +1,6 @@
 #!/bin/bash
 
 OKDIR=${OKDIR?"ERROR: OKDIR is not set"}
-. ${OKDIR}/src/stringent.sh || exit 1
-. ${OKDIR}/gensrc/config.sh || exit 1
 
 if [[ ! -d ${OKDIR} ]]
 then
