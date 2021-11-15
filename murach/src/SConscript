@@ -19,9 +19,14 @@ def okcbl_scan(node, env, path, arg=()):
 
     contents = node.get_text_contents()
     l1 = cre_copy.findall(contents)
+
+    source_dir = node.get_dir()
+
+    # print("Path:%s" % path)
     # this feature if python is call list comprehension
-    l2 = [SCons.Node.FS.find_file(li+".cpy", copypaths) for li in l1]
-    return env.File(l2)
+    l2 = [Classic.find_include(li + ".cpy", node.dir, path)[0] for li in l1]
+    # print("L2:%s"%[str(s) for s in l2])
+    return l2
 
 okcblscanner = Scanner(function = okcbl_scan,
             skeys = ['.cpy'],
@@ -32,20 +37,6 @@ okcblbld = Builder(action=os.environ['OKDIR'] + '/bin/okcompcbl -o $TARGET murac
                    source_scanner = okcblscanner,
                    src_suffix = '.cbl')
 
-    source_dir = node.get_dir()
-
-    # print("Path:%s" % path)
-    # this feature if python is call list comprehension
-    l2 = [Classic.find_include(li + ".cpy", node.dir, path)[0] for li in l1]
-    print("L2:%s"%l2)
-    return l2
-
-
-okcblscanner = Scanner(
-    function=okcbl_scan, skeys=[".cpy"], path_function=FindPathDirs("OKCOPYPATH")
-)
-
-# okcblscanner = Classic("Ok Scanner", ['.cbl'], "OKCOPYPATH", cre_copy)
 
 okcblbld = Builder(
     action=os.environ["OKDIR"] + "/bin/okcompcbl -o $TARGET murach $SOURCE",
