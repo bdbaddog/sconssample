@@ -1,6 +1,7 @@
 
 import os
 import re
+import SCons
 
 Import('env')
 
@@ -17,7 +18,7 @@ def okcbl_scan(node, env, path, arg=()):
     contents = node.get_text_contents()
     l1 = cre_copy.findall(contents)
     # this feature if python is call list comprehension
-    l2 = [li+".cpy" for li in l1]
+    l2 = [SCons.Node.FS.find_file(li+".cpy", copypaths) for li in l1]
     return env.File(l2)
 
 okcblscanner = Scanner(function = okcbl_scan,
